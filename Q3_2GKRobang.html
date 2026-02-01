@@ -28,7 +28,7 @@
                 margin: 40px auto;
                 padding: 40px 40px;
                 border-radius: 18px;
-                box-shadow: 0 6px 18px rgba(44, 27, 36, 0.783); 
+                box-shadow: 0 6px 18px rgba(44, 27, 36, 0.906); 
             }
 
             h1
@@ -113,15 +113,14 @@
     <h1>PISAY Clubs & Organization Application</h1>
     <h3> ⋆｡°✩₊ °✦ [ SY. 2026 - 2027 ] ⋆｡°✩₊ °✦ </h3>
 
-    <form method="post" action="submit"
-      onsubmit="return confirmSubmit()"
+    <form id="signupForm" method="post"
+      onsubmit="return handleSubmit(event)"
       onreset="return confirmReset()">
+
     <!--
     
     This tells the code to only reset/submit the INPUTS as it is a form. 
     - method="post" IS the method/how the data is sent... 
-    - action="submit" IS like a placeholder or a basis to help control where the data is sent on the action (IIRC)
-    We also do onsubmit="" and onreset="" run when submitting or resetting the form
     
     -->
 
@@ -195,11 +194,15 @@
         Why do you want to join? <br/>
         <textarea id="why" name="JoinReasoning" rows="4" cols="30"
         required onblur="emptyOrNot(this)"></textarea>
-    </label><br><br>
+    </label>
     
+    <br><br>
 
         <button type="reset">Reset</button>
         <button type="submit">Submit</button>
+        <button type="button" onclick="window.location.href='viewSignUps.html'">
+            View Signups
+        </button>
 
     </form>
     
@@ -215,6 +218,7 @@
         {
             return confirm("Do you really wish to reset this form?");
         }
+        // added this just incase.... because I keep making the same mistake too in forms 
 
         function emptyOrNot(field)
         {
@@ -226,7 +230,65 @@
             {
                 field.classList.remove("Error");
             }
+            // literally just fixes errors again
         }
+
+        // [ NEW CODE FOR GRADED 3 : using allat that we learned ] 
+
+        function handleSubmit(event)
+        // runs when submitted, and to be sure it's handled 
+        {
+
+        event.preventDefault(); 
+
+        // get confirmation first justtt to be sure!
+        if (!confirmSubmit()) return false;
+
+        // We create aan object that stores ALL form data.........
+        // this will be used later just trust me
+        const signupData = 
+        {
+            studentID: document.getElementById("fStudentID").value,
+            fullName: document.getElementById("fFullName").value,
+            birthday: document.getElementById("fBirthday").value,
+            email: document.getElementById("fEmailAddress").value,
+            mobile: document.getElementById("fMobilePhone").value,
+            gradeLevel: document.getElementById("fGradeLevel").value,
+            housingStatus: document.querySelector('input[name="HousingStatus"]:checked').value,
+            club: document.getElementById("fClub").value,
+            reason: document.getElementById("why").value
+        };
+
+        // Check if localStorage already has sign-ups, & if its' empty
+        // here you get existing signups & collect the data
+        let signups = localStorage.getItem("pisaySignups");
+
+        if (signups)
+        {
+            // Convert string back to array, to be used
+            // will be done if data.. exists yk
+            signups = JSON.parse(signups);
+        }
+        else
+        {
+            signups = [];
+            // or else leave it in an empty array.....
+        }
+
+        signups.push(signupData);
+        // input allat
+        localStorage.setItem("pisaySignups", JSON.stringify(signups));
+        // adds them to the list when you set it
+
+        alert("Your application has been saved!");
+        // so they know that.. submitting actually did something..
+
+        // Reset form after saving-- to prepare if they want to input another set of data
+        document.getElementById("signupForm").reset();
+
+        return false;
+    }
+
     </script>
 
     </body>

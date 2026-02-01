@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>View Signups</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif; 
+            background-color: #f4f4f4;
+            font-size: 20px;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+            background: rgba(210, 204, 210, 0.143);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 6px 18px rgba(44, 27, 36, 0.35); 
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: bold;
+            font-size: 40px;
+            font-family:Arial, Helvetica, sans-serif; 
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            font-family: Arial, Helvetica, sans-serif; 
+            border: 2px solid #5e3655;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #825d87;
+            color: white;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-weight: bold;
+            font-family:Arial, Helvetica, sans-serif; 
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>・❥ Show List of Students Who Signed-Up ❥・</h1>
+    <p><a href="index.html"><b> ೃ⁀➷ Back to Sign Ups</b></a></p>
+
+    <!-- Dropdown to see the Club Sign Ups -->
+    <label>
+        <b>Select Your Club:</b>
+        <select id="clubFilter" onchange="displaySignups()">
+            <option value="ALL">ALL</option>
+        </select>
+    </label>
+
+    <!-- Display Number Sign Ups -->
+    <p id="total"><b>Total Signup: 0</b></p>
+
+    <!-- Table of Current Sign Ups -->
+    <table id="signupTable">
+        <thead>
+            <tr>
+                <th>Club</th>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Grade</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Intern | Extern</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <p class="message" id="message"></p>
+
+</div>
+
+<script>
+
+    const ALL_CLUBS = 
+    [
+        "Invictus",
+        "Animo Chess Club",
+        "Labuyo",
+        "Alianti",
+        "Himig Agham"
+    ];
+    // this makes it so you can see it from all the club options & their sign-ups 
+
+    let signups = JSON.parse(localStorage.getItem("pisaySignups"));
+    // getting signups as a string using jasoon to convert into objects through the function
+
+    const tableBody = document.querySelector("#signupTable tbody");
+    const totalText = document.getElementById("total");
+    const message = document.getElementById("message");
+    const clubFilter = document.getElementById("clubFilter");
+    // used to connect javascript to html, makes it much eeasier
+
+    populateClubOptions();
+    // run the function as soon as page loads ykyk
+
+    if (!signups || signups.length === 0) 
+    {
+        message.textContent = "No sign-ups found.";
+        totalText.textContent = "Total Signup: 0";
+    } 
+    else 
+    {
+        displaySignups();
+    }
+    // are there any signups? use this if-else to be sure
+
+    function populateClubOptions() 
+    {
+    
+    ALL_CLUBS.forEach (club => {
+
+        const option = document.createElement("option");
+        option.value = club;
+        option.textContent = club;
+        clubFilter.appendChild(option);
+
+        });
+        // here we're putting the array we made earlier into the options,,, so it works & it's all there in order
+    }
+
+
+    function displaySignups() {
+        tableBody.innerHTML = "";
+        message.textContent = "";
+        // clear/remove old stuff so they don't look bad and stack,,
+
+        const selectedClub = clubFilter.value;
+        // with the option chosen 
+
+        let filtered = signups;
+
+        if (selectedClub !== "ALL") {
+            filtered = signups.filter(s => s.club === selectedClub);
+        }
+
+        if (filtered.length === 0) {
+            message.textContent = "No Sign Ups for the club";
+            totalText.textContent = "Total Signup: 0";
+            return;
+        }
+        // use the ifs to decide whether u see ALL or just... the selected one 
+        // & display whether or not there are any literal signups
+
+        filtered.forEach(s => {
+            const row = 
+            `
+                <tr>
+                    <td>${s.club}</td>
+                    <td>${s.studentID}</td>
+                    <td>${s.fullName}</td>
+                    <td>Grade ${s.gradeLevel}</td>
+                    <td>${s.email}</td>
+                    <td>${s.mobile}</td>
+                    <td>${s.housingStatus}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+        // build the data or input it into the table,, using special sturf to indicate "heyyy it should here"
+
+        totalText.textContent = "Total Signup: " + filtered.length;
+        // keeps the values updated
+    }
+</script>
+
+</body>
+</html>
